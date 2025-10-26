@@ -1,0 +1,154 @@
+{
+  "info": {
+    "name": "Finance Tracker API",
+    "description": "API collection for Personal Finance Tracker",
+    "version": "1.0.0"
+  },
+  "item": [
+    {
+      "name": "Transactions",
+      "item": [
+        {
+          "name": "Get All Transactions",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/api/transactions",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "transactions"]
+            }
+          }
+        },
+        {
+          "name": "Create Transaction",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Grocery shopping\",\n  \"amount\": 50.00,\n  \"category\": \"Food\",\n  \"type\": \"expense\",\n  \"paymentMethod\": \"credit_card\",\n  \"notes\": \"Weekly groceries\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/transactions",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "transactions"]
+            }
+          }
+        },
+        {
+          "name": "Get Transaction Statistics",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/api/transactions/statistics",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "transactions", "statistics"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "Get All Categories",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/api/categories",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "categories"]
+            }
+          }
+        },
+        {
+          "name": "Initialize Default Categories",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "http://localhost:5000/api/categories/init/defaults",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "categories", "init", "defaults"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Budgets",
+      "item": [
+        {
+          "name": "Get All Budgets",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/api/budgets",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "budgets"]
+            }
+          }
+        },
+        {
+          "name": "Create Budget",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": \"Food\",\n  \"amount\": 500,\n  \"month\": \"2024-10\",\n  \"alerts\": {\n    \"enabled\": true,\n    \"threshold\": 80\n  }\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/budgets",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "budgets"]
+            }
+          }
+        },
+        {
+          "name": "Get Budget Status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/api/budgets/status?month=2024-10",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "budgets", "status"],
+              "query": [
+                {
+                  "key": "month",
+                  "value": "2024-10"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
