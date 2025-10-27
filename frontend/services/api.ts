@@ -1,5 +1,5 @@
-// API Base URL - Adjust based on environment
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// API Base URL - Adjust based on environment. Use relative '/api' so Vite proxy can forward requests to the backend in development.
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 // Error handling
 class APIError extends Error {
@@ -17,12 +17,17 @@ async function fetchAPI(
   const url = `${API_BASE_URL}${endpoint}`;
   
   try {
+    // Attach auth token from localStorage when available
+    const token = localStorage.getItem('token');
+    const headers: Record<string,string> = {
+      'Content-Type': 'application/json',
+      ...((options.headers as Record<string,string>) || {}),
+    };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
     const response = await fetch(url, {
       ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
+      headers,
     });
 
     if (!response.ok) {

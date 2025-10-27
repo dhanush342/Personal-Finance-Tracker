@@ -5,12 +5,20 @@ import mongoose from 'mongoose';
 import transactionRoutes from './routes/transactionRoutes.js';
 import budgetRoutes from './routes/budgetRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
+import authRoutes from './routes/authRoutes.js';
+import { errorHandler } from './middleware/errorHandler.js';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/finance-tracker';
+
+// Ensure JWT secret is present to avoid runtime JWT errors
+if (!process.env.JWT_SECRET) {
+  console.error('FATAL: JWT_SECRET is not set. Set JWT_SECRET in your .env file and restart the server.');
+  process.exit(1);
+}
 
 // Middleware
 app.use(cors());
@@ -37,19 +45,15 @@ mongoose.connection.on('disconnected', () => {
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/budgets', budgetRoutes);
 app.use('/api/categories', categoryRoutes);
+app.use('/api/auth', authRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ status: 'Server is running', timestamp: new Date() });
 });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error('Error:', err);
-  res.status(err.status || 500).json({
-    error: err.message || 'Internal Server Error'
-  });
-});
+// Error handling middleware (centralized)
+app.use(errorHandler);
 
 // 404 handler
 app.use((req, res) => {

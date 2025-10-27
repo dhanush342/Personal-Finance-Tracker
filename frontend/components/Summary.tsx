@@ -1,11 +1,12 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Icon } from './Icon';
+import api, { transactionAPI } from '../services/api';
 
 interface SummaryProps {
-  income: number;
-  expense: number;
-  balance: number;
+  income?: number;
+  expense?: number;
+  balance?: number;
 }
 
 const SummaryCard: React.FC<{ title: string; amount: number; icon: 'income' | 'expense' | 'balance'; color: string }> = ({ title, amount, icon, color }) => {
@@ -28,7 +29,36 @@ const SummaryCard: React.FC<{ title: string; amount: number; icon: 'income' | 'e
 };
 
 
-const Summary: React.FC<SummaryProps> = ({ income, expense, balance }) => {
+const Summary: React.FC<SummaryProps> = () => {
+  const [income, setIncome] = useState(0);
+  const [expense, setExpense] = useState(0);
+  const [balance, setBalance] = useState(0);
+
+  useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      try {
+        const stats: any = await transactionAPI.getStatistics();
+        // stats.byType is an array grouped by type
+        const byType = stats.byType || [];
+        const incomeStat = byType.find((s: any) => s._id === 'income');
+        const expenseStat = byType.find((s: any) => s._id === 'expense');
+        const inc = incomeStat ? incomeStat.total : 0;
+        const exp = expenseStat ? expenseStat.total : 0;
+        if (mounted) {
+          setIncome(inc);
+          setExpense(exp);
+          setBalance(inc - exp);
+        }
+      } catch (err) {
+        // silently fail — leave zeros
+        console.error('Failed to load summary stats', err);
+      }
+    };
+    load();
+    return () => { mounted = false; };
+  }, []);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
       <SummaryCard title="Total Income" amount={income} icon="income" color="bg-green-500" />

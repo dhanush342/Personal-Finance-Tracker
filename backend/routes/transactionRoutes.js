@@ -7,8 +7,12 @@ import {
   deleteTransaction,
   getStatistics
 } from '../controllers/transactionController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
+
+// Protect all transaction routes (user-specific)
+router.use(protect);
 
 // Routes
 router.get('/stats', getStatistics);

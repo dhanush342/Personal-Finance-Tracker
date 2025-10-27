@@ -18,6 +18,11 @@ export const getTransactions = async (req, res) => {
     const { category, type, startDate, endDate } = req.query;
     let filter = {};
 
+    // scope to authenticated user if available
+    if (req.user && req.user._id) {
+      filter.user = req.user._id;
+    }
+
     if (category) filter.category = category;
     if (type) filter.type = type;
     
@@ -41,6 +46,10 @@ export const getTransaction = async (req, res) => {
     if (!transaction) {
       return res.status(404).json({ error: 'Transaction not found' });
     }
+    // ensure ownership
+    if (req.user && String(transaction.user) !== String(req.user._id)) {
+      return res.status(403).json({ error: 'Not authorized' });
+    }
     res.json(transaction);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -55,7 +64,8 @@ export const createTransaction = async (req, res) => {
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
-
+    // attach user from authenticated session
+    value.user = req.user && req.user._id ? req.user._id : value.user;
     const transaction = new Transaction(value);
     await transaction.save();
     res.status(201).json(transaction);
@@ -71,12 +81,12 @@ export const updateTransaction = async (req, res) => {
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
+    const transaction = await Transaction.findById(req.params.id);
+    if (!transaction) return res.status(404).json({ error: 'Transaction not found' });
+    if (req.user && String(transaction.user) !== String(req.user._id)) return res.status(403).json({ error: 'Not authorized' });
 
-    const transaction = await Transaction.findByIdAndUpdate(
-      req.params.id,
-      value,
-      { new: true, runValidators: true }
-    );
+    Object.assign(transaction, value);
+    await transaction.save();
     
     if (!transaction) {
       return res.status(404).json({ error: 'Transaction not found' });
@@ -91,12 +101,11 @@ export const updateTransaction = async (req, res) => {
 // Delete transaction
 export const deleteTransaction = async (req, res) => {
   try {
-    const transaction = await Transaction.findByIdAndDelete(req.params.id);
-    
-    if (!transaction) {
-      return res.status(404).json({ error: 'Transaction not found' });
-    }
-    
+    const transaction = await Transaction.findById(req.params.id);
+    if (!transaction) return res.status(404).json({ error: 'Transaction not found' });
+    if (req.user && String(transaction.user) !== String(req.user._id)) return res.status(403).json({ error: 'Not authorized' });
+
+    await transaction.remove();
     res.json({ message: 'Transaction deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -108,6 +117,11 @@ export const getStatistics = async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
     let match = {};
+
+    // scope stats to the authenticated user
+    if (req.user && req.user._id) {
+      match.user = req.user._id;
+    }
 
     if (startDate || endDate) {
       match.date = {};
