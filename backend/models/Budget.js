@@ -2,6 +2,11 @@ import mongoose from 'mongoose';
 
 const budgetSchema = new mongoose.Schema(
   {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
     category: {
       type: String,
       required: true,
@@ -10,7 +15,7 @@ const budgetSchema = new mongoose.Schema(
     amount: {
       type: Number,
       required: true,
-      positive: true
+      min: 0
     },
     period: {
       type: String,
@@ -44,5 +49,8 @@ const budgetSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Compound unique index: one budget per user/category/month combination
+budgetSchema.index({ user: 1, category: 1, month: 1 }, { unique: true });
 
 export default mongoose.model('Budget', budgetSchema);

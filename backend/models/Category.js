@@ -2,6 +2,11 @@ import mongoose from 'mongoose';
 
 const categorySchema = new mongoose.Schema(
   {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: false // Categories can be user-specific or global
+    },
     name: {
       type: String,
       required: true,

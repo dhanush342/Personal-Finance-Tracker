@@ -2,6 +2,11 @@ import mongoose from 'mongoose';
 
 const transactionSchema = new mongoose.Schema(
   {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
     description: {
       type: String,
       required: true,
@@ -10,7 +15,7 @@ const transactionSchema = new mongoose.Schema(
     amount: {
       type: Number,
       required: true,
-      positive: true
+      min: 0.01
     },
     category: {
       type: String,
@@ -38,5 +43,9 @@ const transactionSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Indexes for performance
+transactionSchema.index({ user: 1, date: -1 }); // Fast queries by user and date
+transactionSchema.index({ user: 1, type: 1 }); // Fast filtering by type
 
 export default mongoose.model('Transaction', transactionSchema);

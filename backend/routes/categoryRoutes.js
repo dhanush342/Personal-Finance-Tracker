@@ -7,15 +7,18 @@ import {
   deleteCategory,
   initializeDefaultCategories
 } from '../controllers/categoryController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// Routes
+// Public routes (read-only)
 router.get('/', getCategories);
 router.get('/defaults', getDefaultCategories);
-router.post('/', createCategory);
-router.post('/init/defaults', initializeDefaultCategories);
-router.put('/:id', updateCategory);
-router.delete('/:id', deleteCategory);
+
+// Protected routes (write operations - admin/authenticated users only)
+router.post('/', protect, createCategory);
+router.post('/init/defaults', initializeDefaultCategories); // Can be public for initial setup
+router.put('/:id', protect, updateCategory);
+router.delete('/:id', protect, deleteCategory);
 
 export default router;

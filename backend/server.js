@@ -21,7 +21,15 @@ if (!process.env.JWT_SECRET) {
 }
 
 // Middleware
-app.use(cors());
+const corsOptions = {
+  origin: (origin, callback) => callback(null, true), // allow all origins, including null (file://)
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+  allowedHeaders: 'Content-Type,Authorization',
+  credentials: false,
+  optionsSuccessStatus: 204,
+};
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 app.use(express.json());
 
 // Connect to MongoDB

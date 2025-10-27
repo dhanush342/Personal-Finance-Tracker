@@ -23,6 +23,11 @@ export const getBudgets = async (req, res) => {
     const { month } = req.query;
     let filter = {};
     
+    // Scope to authenticated user
+    if (req.user && req.user._id) {
+      filter.user = req.user._id;
+    }
+    
     if (month) filter.month = month;
 
     const budgets = await Budget.find(filter);
@@ -40,8 +45,12 @@ export const createBudget = async (req, res) => {
       return res.status(400).json({ error: error.details[0].message });
     }
 
-    // Check if budget already exists for this category and month
+    // Attach user from authenticated session
+    value.user = req.user && req.user._id ? req.user._id : value.user;
+
+    // Check if budget already exists for this category and month for this user
     const existing = await Budget.findOne({
+      user: value.user,
       category: value.category,
       month: value.month
     });
@@ -66,15 +75,18 @@ export const updateBudget = async (req, res) => {
       return res.status(400).json({ error: error.details[0].message });
     }
 
-    const budget = await Budget.findByIdAndUpdate(
-      req.params.id,
-      value,
-      { new: true, runValidators: true }
-    );
-
+    const budget = await Budget.findById(req.params.id);
     if (!budget) {
       return res.status(404).json({ error: 'Budget not found' });
     }
+
+    // Check ownership
+    if (req.user && String(budget.user) !== String(req.user._id)) {
+      return res.status(403).json({ error: 'Not authorized' });
+    }
+
+    Object.assign(budget, value);
+    await budget.save();
 
     res.json(budget);
   } catch (error) {
@@ -85,11 +97,18 @@ export const updateBudget = async (req, res) => {
 // Delete budget
 export const deleteBudget = async (req, res) => {
   try {
-    const budget = await Budget.findByIdAndDelete(req.params.id);
+    const budget = await Budget.findById(req.params.id);
 
     if (!budget) {
       return res.status(404).json({ error: 'Budget not found' });
     }
+
+    // Check ownership
+    if (req.user && String(budget.user) !== String(req.user._id)) {
+      return res.status(403).json({ error: 'Not authorized' });
+    }
+
+    await budget.deleteOne();
 
     res.json({ message: 'Budget deleted successfully' });
   } catch (error) {
@@ -109,18 +128,28 @@ export const getBudgetStatus = async (req, res) => {
     const startDate = new Date(`${year}-${monthNum}-01`);
     const endDate = new Date(year, parseInt(monthNum), 0);
 
-    const budgets = await Budget.find({ month });
+    // Filter by user
+    const filter = { month };
+    if (req.user && req.user._id) {
+      filter.user = req.user._id;
+    }
+
+    const budgets = await Budget.find(filter);
 
     const budgetStatus = await Promise.all(
       budgets.map(async (budget) => {
+        // Match transactions for the same user
+        const matchCriteria = {
+          category: budget.category,
+          type: 'expense',
+          date: { $gte: startDate, $lte: endDate }
+        };
+        if (req.user && req.user._id) {
+          matchCriteria.user = req.user._id;
+        }
+
         const spent = await Transaction.aggregate([
-          {
-            $match: {
-              category: budget.category,
-              type: 'expense',
-              date: { $gte: startDate, $lte: endDate }
-            }
-          },
+          { $match: matchCriteria },
           { $group: { _id: null, total: { $sum: '$amount' } } }
         ]);
 

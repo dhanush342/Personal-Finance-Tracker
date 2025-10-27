@@ -6,8 +6,12 @@ import {
   deleteBudget,
   getBudgetStatus
 } from '../controllers/budgetController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
+
+// Protect all budget routes (user-specific)
+router.use(protect);
 
 // Routes
 router.get('/', getBudgets);

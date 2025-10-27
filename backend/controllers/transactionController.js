@@ -105,7 +105,7 @@ export const deleteTransaction = async (req, res) => {
     if (!transaction) return res.status(404).json({ error: 'Transaction not found' });
     if (req.user && String(transaction.user) !== String(req.user._id)) return res.status(403).json({ error: 'Not authorized' });
 
-    await transaction.remove();
+    await transaction.deleteOne();
     res.json({ message: 'Transaction deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
