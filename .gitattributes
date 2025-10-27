@@ -1,0 +1,17 @@
+* text=auto eol=lf
+
+# Ensure Windows scripts keep CRLF where it matters
+*.bat eol=crlf
+*.cmd eol=crlf
+*.ps1 eol=crlf
+
+# Unix shell scripts use LF
+*.sh eol=lf
+
+# Images and binaries
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary

@@ -7,205 +7,257 @@ A full-stack personal finance management application with React frontend and Nod
 ## 📋 Architecture
 
 - **Frontend**: React 19 + TypeScript + Vite
-- **Backend**: Node.js + Express.js
-- **Database**: MongoDB with Mongoose
-- **Visualization**: Recharts for charts and analytics
 
-## 🚀 Quick Start
+# 💰 Personal Finance Tracker
 
-### Prerequisites
-- Node.js (v16+)
-- MongoDB running locally or MongoDB Atlas account
+A modern, full-stack Personal Finance Management Web App that helps you take control of your money.
 
-### Automated Setup (Windows)
 
-Simply run the startup script:
+With this app, you can add, view, and analyze your daily transactions, manage budgets, and gain insights into your spending patterns using charts powered by Recharts.
+
+---
+
+## 🚀 Features
+
+- Add & Manage Transactions — Track income and expenses easily.
+- Visual Analytics — Dynamic charts to visualize your spending trends.
+- Categories & Budgets — Organize transactions by category and set monthly limits.
+- Date Filters — View reports for custom date ranges.
+- MongoDB Integration — Persistent data storage with Mongoose ORM.
+- Modern Stack — React 19 + TypeScript + Vite + Node.js + Express.
+- Environment Secure — Configurable `.env` file for sensitive keys.
+- Scalable Design — Ready for authentication and cloud deployment.
+
+---
+
+## 🧱 Tech Stack
+
+| Layer    | Technology                         |
+|--------- |------------------------------------|
+| Frontend | React 19, TypeScript, Vite, Recharts |
+| Backend  | Node.js, Express.js                |
+| Database | MongoDB + Mongoose                 |
+| Styling  | TailwindCSS                        |
+| API Test | Postman / Thunder Client           |
+| Deploy   | Vercel / Render / MongoDB Atlas    |
+
+---
+
+## 🧰 Getting Started
+
+### 1️⃣ Clone the repository
+
 ```bash
-start-app.bat
+git clone https://github.com/dhanush342/Personal-Finance-Tracker.git
+cd Personal-Finance-Tracker
 ```
 
-This will:
-- ✅ Start MongoDB
-- ✅ Initialize the database with default categories
-- ✅ Start backend server (port 5000)
-- ✅ Start frontend server (port 3000)
-- ✅ Open the app in your browser
+### 2️⃣ Install dependencies
 
-### Manual Setup
+Backend
 
-#### 1. Install Dependencies
-
-**Frontend:**
-```bash
-npm install
-```
-
-**Backend:**
 ```bash
 cd backend
 npm install
 ```
 
-#### 2. Configure Environment
+Frontend
 
-Backend `.env` file (already configured):
+```bash
+cd ../frontend
+npm install
+```
+
+### 3️⃣ Setup Environment Variables
+
+Create a `.env` file in `/backend` and add:
+
 ```env
 MONGODB_URI=mongodb://localhost:27017/finance-tracker
 PORT=5000
+JWT_SECRET=change_this_to_a_long_random_string
 NODE_ENV=development
 ```
 
-Frontend `.env.local` file (already configured):
+Create `.env.local` in `/frontend` and add:
+
 ```env
-VITE_API_URL=http://localhost:5000/api
+VITE_API_URL=/api
 ```
 
-#### 3. Initialize Database
+Vite dev proxy forwards `/api` to the backend at `http://localhost:5000` (see `frontend/vite.config.ts`).
+
+### 4️⃣ Initialize Database (optional)
 
 ```bash
 cd backend
 npm run init-db
 ```
 
-This creates 12 default categories (7 expense + 5 income).
+This seeds default income and expense categories.
 
-#### 4. Start Servers
+### 5️⃣ Run the project
 
-**Terminal 1 - Backend:**
+Start backend and frontend in separate terminals:
+
+Backend
+
 ```bash
 cd backend
 npm run dev
 ```
-Backend runs on: `http://localhost:5000`
 
-**Terminal 2 - Frontend:**
+Frontend
+
 ```bash
+cd frontend
 npm run dev
 ```
-Frontend runs on: `http://localhost:3000`
 
-## 🛠️ Available Scripts
+Then open the shown URL (usually http://localhost:3000 or http://localhost:3002).
 
-### Backend Scripts
-```bash
-npm start          # Start production server
-npm run dev        # Start development server with auto-reload
-npm run init-db    # Initialize database with default categories
-npm run test-api   # Run API endpoint tests
+---
+
+## 🪄 Quick Start (Windows)
+
+You can use the helper script to launch everything automatically:
+
+```bat
+start-app.bat
 ```
 
-### Frontend Scripts
-```bash
-npm run dev        # Start development server
-npm run build      # Build for production
-npm run preview    # Preview production build
-```
+This will:
+- Start MongoDB (if running as service)
+- Initialize default categories
+- Start backend on port 5000
+- Start frontend on port 3000 (or pick 3001/3002 if busy)
+- Open the app in your browser
 
-## 📁 Project Structure
+---
 
-```
-web/
-├── backend/
-│   ├── controllers/        # Business logic
-│   ├── models/            # Database models
-│   ├── routes/            # API routes
-│   ├── middleware/        # Error handling
-│   ├── server.js          # Express server
-│   ├── initDatabase.js    # DB initialization script
-│   ├── testAPI.js         # API testing script
-│   └── package.json       # Backend dependencies
-│
-├── components/            # React components
-├── services/             # API client
-├── hooks/                # Custom React hooks
-├── App.tsx               # Main React component
-├── start-app.bat         # Quick start script (Windows)
-└── README.md             # This file
-```
+## � Screenshots
 
-Backend API runs on: `http://localhost:5000/`
+Add screenshots of the dashboard, charts, and transaction forms here.
 
-## 📁 Project Structure
+---
 
-```
-web/
-├── frontend/          # React + Vite application
-├── backend/           # Express API server
-│   ├── models/        # MongoDB schemas
-│   ├── controllers/   # Business logic
-│   ├── routes/        # API endpoints
-│   └── middleware/    # Custom middleware
-├── components/        # React components
-├── hooks/            # Custom hooks
-└── types.ts          # TypeScript definitions
-```
+## 🌐 Future Enhancements
 
-## 🔧 Available Scripts
+- JWT-based Authentication (login/logout, roles)
+- Mobile-friendly responsive UI improvements
+- Cloud deployment (Render / Vercel + MongoDB Atlas)
+- AI-based expense insights
+- Export transactions (CSV, Excel, PDF)
 
-### Frontend
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-
-### Backend (cd backend)
-- `npm run dev` - Start with auto-reload
-- `npm start` - Start production server
-
-## � Environment Variables
-
-Create or update `.env.local` in the project root (already created):
-
-```
-VITE_API_URL=http://localhost:5000/api
-```
-
-This points the frontend to your backend API. Change it if your backend runs on a different host/port.
+---
 
 ## 📚 API Quick Reference
 
 Base URL: `http://localhost:5000/api`
 
-Transactions:
-- `GET /transactions` — list all (supports filters: category, type, startDate, endDate)
+Transactions
+
+- `GET /transactions` — list (supports category, type, startDate, endDate)
 - `POST /transactions` — create
 - `GET /transactions/:id` — get one
 - `PUT /transactions/:id` — update
 - `DELETE /transactions/:id` — delete
 - `GET /transactions/statistics` — summary by type and category
 
-Budgets:
+Budgets
+
 - `GET /budgets` — list all (optional: month)
 - `POST /budgets` — create
 - `PUT /budgets/:id` — update
 - `DELETE /budgets/:id` — delete
 - `GET /budgets/status?month=YYYY-MM` — spending vs budget
 
-Categories:
+Categories
+
 - `GET /categories` — list all
 - `POST /categories` — create
 - `PUT /categories/:id` — update
 - `DELETE /categories/:id` — delete
-- `POST /categories/init/defaults` — initialize 8 defaults
+- `POST /categories/init/defaults` — seed defaults
 
-## ✨ Features
+---
 
-- ✅ Transaction management
-- ✅ Budget tracking
-- ✅ Category management
-- ✅ Financial analytics
-- ✅ Monthly reports
-- ✅ Spending insights
-- ✅ Dark mode support
+## 🛠️ Scripts
 
-## 🗄️ Database
+Backend (from `backend/`)
 
-MongoDB collections:
-- **Transactions** - Income and expense records
-- **Budgets** - Budget allocations by category
-- **Categories** - Transaction categories
+```bash
+npm run dev        # start dev server (nodemon)
+npm start          # start production server
+npm run init-db    # seed default categories
+npm run test-api   # quick end-to-end API test
+```
 
-## 🔗 Integration
+Frontend (from `frontend/`)
 
-Frontend communicates with backend via REST API:
-- Base URL: `http://localhost:5000/api`
-- CORS enabled for local development
+```bash
+npm run dev        # start Vite dev server
+npm run build      # build for production
+npm run preview    # preview production build
+```
+
+---
+
+## 🧩 Project Structure
+
+```
+web/
+├─ backend/
+│  ├─ controllers/       # Business logic
+│  ├─ models/            # Mongoose schemas
+│  ├─ routes/            # API endpoints
+│  ├─ middleware/        # Auth, error handling
+│  ├─ server.js          # Express app
+│  ├─ initDatabase.js    # Seed script
+│  ├─ testAPI.js         # API smoke test
+│  └─ package.json
+│
+├─ frontend/
+│  ├─ components/        # UI components (Dashboard, Summary, etc.)
+│  ├─ context/           # Auth context
+│  ├─ services/          # API client wrappers
+│  ├─ hooks/             # Custom hooks
+│  ├─ App.tsx            # App routing
+│  └─ package.json
+│
+├─ start-app.bat         # Windows quick start
+├─ quick-start.bat       # Windows install helper
+└─ README.md
+```
+
+---
+
+## 🧯 Troubleshooting
+
+Port 5000 already in use (backend)
+
+```powershell
+netstat -ano | findstr :5000
+taskkill /PID <PID_FROM_PREVIOUS_COMMAND> /F
+# then restart: cd backend; npm run dev
+```
+
+MongoDB not running
+
+- If installed as a Windows service, run PowerShell as Administrator:
+```powershell
+Get-Service *mongo*
+Start-Service MongoDB
+```
+
+Health check
+
+```powershell
+curl http://localhost:5000/api/health
+```
+
+“Failed to fetch” in the browser
+
+- Make sure the backend is running and the health check works.
+- Ensure you are logged in; protected routes need a token.
+- The frontend uses Vite proxy (`/api` -> `http://localhost:5000`).
