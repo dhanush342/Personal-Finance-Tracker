@@ -30,22 +30,47 @@ async function fetchAPI(
       headers,
     });
 
+    const contentType = response.headers.get('Content-Type') || '';
+
+    // Attempt to parse error bodies safely
     if (!response.ok) {
-      const error = await response.json();
-      throw new APIError(response.status, error.error || 'API Error');
+      if (contentType.includes('application/json')) {
+        try {
+          const error = await response.json();
+          throw new APIError(response.status, error.error || error.message || 'API Error');
+        } catch {
+          const text = await response.text();
+          throw new APIError(response.status, text || 'API Error');
+        }
+      } else {
+        const text = await response.text();
+        throw new APIError(response.status, text || 'API Error');
+      }
     }
 
-    // Handle empty responses (like DELETE)
-    if (response.status === 204) {
+    // No content
+    if (response.status === 204 || response.status === 205) {
       return null;
     }
 
-    return await response.json();
+    // Parse success bodies safely
+    if (contentType.includes('application/json')) {
+      try {
+        return await response.json();
+      } catch {
+        // Empty body with 2xx should return null
+        const text = await response.text();
+        return text ? JSON.parse(text) : null;
+      }
+    }
+    // Fallback to text for non-JSON endpoints
+    const text = await response.text();
+    return text || null;
   } catch (error) {
     if (error instanceof APIError) {
       throw error;
     }
-    throw new Error(`Failed to fetch ${endpoint}: ${error}`);
+    throw new Error(`Failed to fetch ${endpoint}: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
